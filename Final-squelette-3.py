@@ -20,11 +20,12 @@ class Player :
 
     @property
     def is_alive(self):
-
         return self.life > 0                                                    #retourne un true si la vie d'un personnage est supérieur a zéro (false si non)
 
     def get_hit(self, damages):
         self.life -= damages
+        if self.life < 0 :
+            self.life = 0
         return self.life
 
     def __str__(self):
@@ -32,7 +33,7 @@ class Player :
 
     def new_character(self):                                                    #Nouveau "sbires"
         for key,val in AVAILABLE_CHARACTERS.items() :
-            print ("-",key,"->",val)
+            print ("-",key,"==>",val)
         character_chose = input (f"{self.name} : choisis un sbires !")
         
         line = input(f"{self.name}: Wich line would you place the new one (0-{self.game.nb_lines-1}) ? (enter if none) ")
@@ -100,6 +101,7 @@ class Game :
     def draw(self):                         #dessine le plateau 
 
         print(f"{self.players[0].life:<4}{'  '*self.nb_columns}{self.players[1].life:>4}")
+        print(f"{self.players[0].name}{'  '*self.nb_columns}{self.players[1].name:>4}")
 
         print("----"+self.nb_columns*"--"+"----")
 
@@ -107,7 +109,7 @@ class Game :
             print(f"|{line:>2}|", end="")
             for col in range(self.nb_columns):
                 if self.get_character_at((line,col)) == None :                  #mets le sbires a un 
-                    print (".", end=" ")
+                    print ("0", end=" ")
                 else :
                     
                     print (self.get_character_at((line,col)).design, end=" ") 
@@ -134,7 +136,11 @@ class Game :
 
     def play(self):
         
-        while self.current_player.is_alive == True :                            #attribus dérivable  = pas de ()
+        while self.current_player.is_alive == True :                             #attribus dérivable  = pas de ()
+
+                     
+
+        
             self.play_turn()
             self.player_turn += 1                                               #ajoute 1 a player_turn
 
@@ -221,8 +227,12 @@ class Character () :                                                            
         self.attack()
     def __str__(self):
         return "Personnage",self.base_price,"vie : ",self.base_life,"force :",self.base_strength 
-  
+
+
+
+AVAILABLE_CHARACTERS ["C"] = Character                                          #On rajoute Fighter a la liste des "sbires" et "C" = Fighter 
 class Fighter (Character):                                                      #class Fighter
+                                          
 
     base_price = 2
     base_strength = 2
@@ -233,6 +243,7 @@ class Fighter (Character):                                                      
         else :
             design = ")"                                                        #sbires oposants 
         return design
+AVAILABLE_CHARACTERS ["F"] = Fighter 
 class Tank (Character) :                                                        #class Tank
 
     base_price = 3
@@ -254,10 +265,11 @@ class Tank (Character) :                                                        
             self.turn_to_move = False
         else :
             self.turn_to_move = True 
-AVAILABLE_CHARACTERS ["T"] = Tank                                               #on rajoute Tank a la liste des "sbires" et "T" = Tank
-AVAILABLE_CHARACTERS ["F"] = Fighter                                            #On rajoute Fighter a la liste des "sbires" et "F" = Fighter
-AVAILABLE_CHARACTERS ["C"] = Character                                          #On rajoute Fighter a la liste des "sbires" et "C" = Fighter  
-        
+    
+AVAILABLE_CHARACTERS ["T"] = Tank                                     #on rajoute Tank a la liste des "sbires" et "T" = Tank
+
+
+
 
     
 
@@ -273,4 +285,4 @@ if __name__ == "__main__" :
     
     Tournoi = Game(joueurs1, joueurs2)
     Tournoi.play ()
-
+    
